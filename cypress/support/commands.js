@@ -21,5 +21,21 @@
 // Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
 //
 //
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+// -- This will overwrite an existing command -
+
+Cypress.Commands.add('fillMandatoryFieldsAndSubmit',function()
+{
+    cy.get('#firstName').type('Alex')
+    cy.get('#lastName').type('Melo')
+    cy.get('#email').type('alexhg2000@gmail.com')
+    cy.get('#open-text-area').type('Teste de inserção de texto')
+    cy.get('button[type="submit"]').click()
+})
+Cypress.Commands.add('EncontraItensPeloContains',function()
+{
+    cy.get('#firstName').type('Alex')
+    cy.get('#lastName').type('Melo')
+    cy.get('#email').type('alexhg2000@gmail.com')
+    cy.get('#open-text-area').type('Teste de inserção de texto')
+    cy.contains('button','Enviar').click()
+})
