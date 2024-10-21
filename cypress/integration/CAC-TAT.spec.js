@@ -41,12 +41,12 @@ describe('Central de Atendimento ao Cliente TAT', function() {
          .type('testetelefone')
          .should('have.value', '')
     })
-    it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formuláriocampo telefone continua vazio quando preenchido ',function()
+    it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário campo telefone continua vazio quando preenchido ',function()
     {
         cy.get('#firstName').type('Alex')
         cy.get('#lastName').type('Melo')
         cy.get('#email').type('alexhg2000@gmail.com')
-        cy.get('#phone-checkbox').click()
+        cy.get('#phone-checkbox').check()
         cy.get('#open-text-area').type('Teste')
         cy.get('button[type="submit"]').click()
         cy.get('.error').should('be.visible')       
@@ -85,9 +85,79 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.fillMandatoryFieldsAndSubmit()
         cy.get('.success').should('be.visible')
     })
-    it.only('envia o formulario utilizando o contains',function()
+    it('envia o formulario utilizando o contains',function()
       {
         cy.EncontraItensPeloContains()
         cy.get('.success').should('be.visible')
     })
+    it('seleciona um produto (YouTube) por seu texto',function()
+      {
+        cy.get('#product')
+        .select('YouTube')
+        .should('have.value','youtube')
+      })
+      it('seleciona um produto (mentoria) por seu valor (value)',function()
+      {
+        cy.get('#product')
+        .select('mentoria')
+        .should('have.value','mentoria')
+      })
+      it('seleciona um produto (Blog) por seu índice',function()
+      {
+        cy.get('#product')
+        .select(1)
+        .should('have.value','blog')
+      })
+      it('marca o tipo de atendimento "Feedback"',function()
+      {
+        cy.get('input[type="radio"][value="feedback"]')
+        .check()
+        .should('have.value','feedback')
+        })
+      it('marca cada tipo de atendimento',function(){
+        cy.get('input[type="radio"]')
+        .should('have.length',3)
+        .each(function($radio){
+          cy.wrap($radio).check()
+          cy.wrap($radio).should('be.checked')
+
+        })
+      })
+      it('seleciona um arquivo da pasta fixtures',function(){
+        cy.get('input[type="file"]#file-upload')
+        .should('not.have.value')
+        .selectFile('./cypress/fixtures/example.json')
+        .should(function($input) {
+          expect($input[0].files[0].name).to.equal('example.json')
+        })
+      })
+      it('seleciona um arquivo da pasta fixtures parte2',function(){
+        cy.get('input[type=file]').selectFile('./cypress/fixtures/example.json')
+      })
+      it('seleciona um arquivo simulando um drag-and-drop',function(){
+        cy.get('input[type="file"]#file-upload')
+        .should('not.have.value')
+        .selectFile('./cypress/fixtures/example.json',{action:'drag-drop'})
+        .should(function($input) {
+          expect($input[0].files[0].name).to.equal('example.json')
+        })
+      })
+      it('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias',function(){
+        cy.fixture('example.json').as('sampleFile')
+        cy.get('input[type="file"]') 
+          .selectFile('@sampleFile')
+          .should(function($input) {
+            expect($input[0].files[0].name).to.equal('example.json')
+          })
+      })
+      it.only('verifica que a política de privacidade abre em outra aba sem a necessidade de um clique',function(){
+        cy.get('#privacy a').should('have.attr', 'target', '_blank')
+      })
+      it('acessa a página da política de privacidade removendo o target e então clicando no link',function(){
+        cy.get('#privacy a')
+        .invoke('removeAttr', 'target')
+        .click()
+        cy.contains('Talking About Testing').should('be.visible')
+      })
+
   })
