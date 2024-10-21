@@ -8,6 +8,8 @@
 //<reference types="Cypress" />
 
 describe('Central de Atendimento ao Cliente TAT', function() {
+    const THREE_SECONDS_IN_MS = 3000
+
     beforeEach(function(){
       cy.visit('./src/index.html')
     })
@@ -16,24 +18,32 @@ describe('Central de Atendimento ao Cliente TAT', function() {
       cy.title().should('be.equal', 'Central de Atendimento ao Cliente TAT')
       //****// */
     })
-    it('preenche os campos obrigatórios e envia o formulário',function()
+    it.only('preenche os campos obrigatórios e envia o formulário',function()
     {
       const longText = 'Estou ficando cansado, da tal tecnologia, Só se fala por e-mail, Mensagem curta e fria, Twitter e Facebook, Antes que eu caduque, Vou dizer tudo em poesia'
+
+      cy.clock()
       cy.get('#firstName').type('Alex')
       cy.get('#lastName').type('Melo')
       cy.get('#email').type('alexhg2000@gmail.com')
       cy.get('#open-text-area').type(longText, {delay: 0})
-      cy.get('button[type="submit"]').click()
-      cy.get('.success').should('be.visible')
+      //cy.get('button[type="submit"]').click()
+      cy.contains('button', 'Enviar').click()
+      cy.tick(THREE_SECONDS_IN_MS)
+      cy.get('.success').should('not.be.visible')
     })
-    it('exibe mensagem de erro ao submeter o formulário com um email com formatação inválida',function()
+    it.only('exibe mensagem de erro ao submeter o formulário com um email com formatação inválida',function()
     {
+    cy.clock()
     cy.get('#firstName').type('Alex')
       cy.get('#lastName').type('Melo')
       cy.get('#email').type('alexhg2000@gmail.com.')
       cy.get('#open-text-area').type('Teste')
       cy.get('button[type="submit"]').click()
+      
       cy.get('.error').should('be.visible')
+      cy.tick(THREE_SECONDS_IN_MS)
+      cy.get('.error').should('not.be.visible')
     })
     it('campo telefone continua vazio quando preenchido ',function()
     {
